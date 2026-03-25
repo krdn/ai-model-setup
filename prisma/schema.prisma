@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Provider {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  keys      ApiKey[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ApiKey {
+  id            String   @id @default(cuid())
+  name          String   // e.g., "My OpenAI Key"
+  keyData       String?  // Optional for Ollama
+  maskedKey     String?  // Optional for Ollama
+  baseUrl       String?  // Custom endpoint HTTP URL
+  selectedModel String?  // User-selected specific model
+  providerId    String
+  provider      Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
